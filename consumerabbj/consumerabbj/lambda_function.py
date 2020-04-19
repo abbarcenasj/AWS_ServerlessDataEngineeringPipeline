@@ -128,19 +128,19 @@ def apply_sentiment(df, column="wikipedia_snippit"):
 
 ### Function to extract entities ###
 
-# def extract_entities(row):
+def extract_entities(row):
 
-#     LOG.info(f"Processing {row}")
-#     comprehend = boto3.client(service_name='comprehend')
-#     payload = comprehend.detect_entities(Text=row, LanguageCode='en')
-#     LOG.debug(f"Found Entities: {payload}")
-#     entities = payload['Entities']
-#     return entities
+   LOG.info(f"Processing {row}")
+   comprehend = boto3.client(service_name='comprehend')
+   payload = comprehend.detect_entities(Text=row, LanguageCode='en')
+   LOG.debug(f"Found Entities: {payload}")
+   entities = payload['Entities']
+   return entities
 
-# def apply_entities(df, column="wikipedia_snippet"):
+def apply_entities(df, column="wikipedia_snippet"):
 
-#     df['Entities'] = df[column].apply(extract_entities)
-#     return df
+   df['Entities'] = df[column].apply(extract_entities)
+   return df
 
 
 
@@ -196,9 +196,9 @@ def lambda_handler(event, context):
     LOG.info(f"Sentiment from FANG companies: {df.to_dict()}")
     
     # Perform Named Entity Recognition
-    # df = apply_entities(df)
-    # LOG.info(f"Entities from FANG companies: {df.to_dict()}")
+    df = apply_entities(df)
+    LOG.info(f"Entities from FANG companies: {df.to_dict()}")
 
     # Write result to S3
     write_s3(df=df, bucket="fangsentimentabbj", name=names)
-    #write_s3(df=df2, bucket="fangentitiesabbj", name=names)
+    write_s3(df=df2, bucket="fangentitiesabbj", name=names)
